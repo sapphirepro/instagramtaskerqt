@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon.png</file>
+        <file>i18n/InstagramTasker_de.ts</file>
+        <file>i18n/InstagramTasker_es.ts</file>
+        <file>i18n/InstagramTasker_fr.ts</file>
+        <file>i18n/InstagramTasker_nl.ts</file>
+        <file>i18n/InstagramTasker_it.ts</file>
+        <file>i18n/InstagramTasker_pt.ts</file>
+        <file>i18n/InstagramTasker_pl.ts</file>
+        <file>i18n/InstagramTasker_cs.ts</file>
+        <file>i18n/InstagramTasker_sk.ts</file>
+        <file>i18n/InstagramTasker_hu.ts</file>
+        <file>i18n/InstagramTasker_ro.ts</file>
+        <file>i18n/InstagramTasker_sv.ts</file>
+        <file>i18n/InstagramTasker_no.ts</file>
+        <file>i18n/InstagramTasker_da.ts</file>
+        <file>i18n/InstagramTasker_fi.ts</file>
+        <file>i18n/InstagramTasker_el.ts</file>
+        <file>i18n/InstagramTasker_ru.ts</file>
+    </qresource>
+</RCC>
