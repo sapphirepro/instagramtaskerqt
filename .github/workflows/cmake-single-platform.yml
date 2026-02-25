@@ -117,9 +117,12 @@ jobs:
             ruby ruby-devel make gcc \
             rpm-build file patchelf
 
-      - name: Install fpm
+      - name: Install fpm (ensure in PATH)
+        shell: bash
         run: |
           gem install --no-document fpm
+          echo "$(ruby -e 'require "rubygems"; print Gem.bindir')" >> "$GITHUB_PATH"
+          fpm --version
 
       - name: Configure
         run: >
