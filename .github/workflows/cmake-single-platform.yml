@@ -121,7 +121,9 @@ jobs:
         shell: bash
         run: |
           gem install --no-document fpm
-          echo "$(ruby -e 'require "rubygems"; print Gem.bindir')" >> "$GITHUB_PATH"
+          GEM_BINDIR="$(ruby -e 'require "rubygems"; print Gem.bindir')"
+          export PATH="$GEM_BINDIR:$PATH"
+          echo "$GEM_BINDIR" >> "$GITHUB_PATH"
           fpm --version
 
       - name: Configure
