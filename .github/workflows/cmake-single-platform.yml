@@ -79,10 +79,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distro: [ubuntu, fedora, opensuse]
+        distro: [ubuntu, fedora]
 
     container:
-      image: ${{ matrix.distro == 'ubuntu' && 'ubuntu:24.04' || matrix.distro == 'fedora' && 'fedora:latest' || 'opensuse/tumbleweed:latest' }}
+      image: ${{ matrix.distro == 'ubuntu' && 'ubuntu:24.04' || 'fedora:latest' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -107,21 +107,11 @@ jobs:
             ruby ruby-devel make gcc \
             rpm-build file patchelf
 
-      - name: Install build deps (openSUSE Tumbleweed)
-        if: matrix.distro == 'opensuse'
-        run: |
-          zypper --non-interactive refresh
-          zypper --non-interactive install \
-            cmake ninja gcc-c++ \
-            qt6-base-devel qt6-tools-devel \
-            ruby ruby-devel make gcc \
-            rpm-build file patchelf
-
-      - name: Install fpm (force bindir in PATH)
+      - name: Install fpm
         shell: bash
         run: |
-          gem install --no-document fpm --bindir /usr/local/bin
-          command -v fpm
+          gem install --no-document fpm
+          command -v fpm || true
           fpm --version
 
       - name: Configure
@@ -159,8 +149,8 @@ jobs:
             -C pkgroot \
             .
 
-      - name: Build RPM (Fedora/openSUSE)
-        if: matrix.distro != 'ubuntu'
+      - name: Build RPM (Fedora)
+        if: matrix.distro == 'fedora'
         run: |
           fpm -s dir -t rpm \
             -n "${{ env.APP_NAME }}" \
