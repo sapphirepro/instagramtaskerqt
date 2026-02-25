@@ -1,0 +1,179 @@
+name: CI (Qt + CMake + Packages)
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  BUILD_TYPE: Release
+  QT_VERSION: "6.6.3"
+  APP_NAME: instagramtaskerqt
+  BIN_NAME: InstagramTasker
+
+jobs:
+  build_windows:
+    name: Windows build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        id: qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DCMAKE_PREFIX_PATH="${{ steps.qt.outputs.qt-path }}"
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Upload artifact (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-windows
+          path: |
+            build/**/*.exe
+            build/**/${{ env.BIN_NAME }}.exe
+
+  build_macos:
+    name: macOS build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        id: qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DCMAKE_PREFIX_PATH="${{ steps.qt.outputs.qt-path }}"
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Upload artifact (macOS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-macos
+          path: |
+            build/**/*.app
+            build/**/${{ env.BIN_NAME }}
+
+  linux_packages:
+    name: Linux packages (${{ matrix.distro }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [ubuntu, fedora, opensuse]
+
+    container:
+      image: ${{ matrix.distro == 'ubuntu' && 'ubuntu:24.04' || matrix.distro == 'fedora' && 'fedora:latest' || 'opensuse/tumbleweed:latest' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build deps (Ubuntu)
+        if: matrix.distro == 'ubuntu'
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            cmake ninja-build g++ \
+            qt6-base-dev qt6-tools-dev qt6-tools-dev-tools \
+            ruby ruby-dev build-essential \
+            patchelf file
+
+      - name: Install build deps (Fedora)
+        if: matrix.distro == 'fedora'
+        run: |
+          dnf -y update
+          dnf -y install \
+            cmake ninja-build gcc-c++ \
+            qt6-qtbase-devel qt6-qttools-devel \
+            ruby ruby-devel make gcc \
+            rpm-build file patchelf
+
+      - name: Install build deps (openSUSE Tumbleweed)
+        if: matrix.distro == 'opensuse'
+        run: |
+          zypper --non-interactive refresh
+          zypper --non-interactive install \
+            cmake ninja gcc-c++ \
+            qt6-base-devel qt6-tools-devel \
+            ruby ruby-devel make gcc \
+            rpm-build file patchelf
+
+      - name: Install fpm
+        run: |
+          gem install --no-document fpm
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DCMAKE_INSTALL_PREFIX=/usr
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+      - name: Install to staging (DESTDIR)
+        run: |
+          rm -rf pkgroot
+          mkdir -p pkgroot
+          DESTDIR="$PWD/pkgroot" cmake --install build
+
+      - name: Compute version
+        id: ver
+        shell: bash
+        run: |
+          echo "ver=1.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Build DEB (Ubuntu)
+        if: matrix.distro == 'ubuntu'
+        run: |
+          fpm -s dir -t deb \
+            -n "${{ env.APP_NAME }}" \
+            -v "${{ steps.ver.outputs.ver }}" \
+            --architecture amd64 \
+            --description "InstagramTaskerQt GUI" \
+            --license "GPL-2.0" \
+            --url "https://github.com/${GITHUB_REPOSITORY}" \
+            --maintainer "sapphirepro" \
+            -C pkgroot \
+            .
+
+      - name: Build RPM (Fedora/openSUSE)
+        if: matrix.distro != 'ubuntu'
+        run: |
+          fpm -s dir -t rpm \
+            -n "${{ env.APP_NAME }}" \
+            -v "${{ steps.ver.outputs.ver }}" \
+            --architecture x86_64 \
+            --description "InstagramTaskerQt GUI" \
+            --license "GPL-2.0" \
+            --url "https://github.com/${GITHUB_REPOSITORY}" \
+            --maintainer "sapphirepro" \
+            -C pkgroot \
+            .
+
+      - name: Upload artifacts (Linux packages)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-${{ matrix.distro }}-packages
+          path: |
+            *.deb
+            *.rpm
