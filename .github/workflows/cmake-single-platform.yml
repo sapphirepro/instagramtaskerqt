@@ -117,13 +117,11 @@ jobs:
             ruby ruby-devel make gcc \
             rpm-build file patchelf
 
-      - name: Install fpm (ensure in PATH)
+      - name: Install fpm (force bindir in PATH)
         shell: bash
         run: |
-          gem install --no-document fpm
-          GEM_BINDIR="$(ruby -e 'require "rubygems"; print Gem.bindir')"
-          export PATH="$GEM_BINDIR:$PATH"
-          echo "$GEM_BINDIR" >> "$GITHUB_PATH"
+          gem install --no-document fpm --bindir /usr/local/bin
+          command -v fpm
           fpm --version
 
       - name: Configure
