@@ -6,13 +6,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)  # Если в будущем добавите .ui файлы, это пригодится
+set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Установка префикса по умолчанию в ~/.local (для локальной установки без root)
-if(NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+# Set default install prefix only if user didn't override it
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.local" CACHE PATH "Default install prefix" FORCE)
 endif()
 
@@ -27,14 +27,14 @@ add_executable(InstagramTasker
     preferencesdialog.h
     ts_translator.cpp
     ts_translator.h
-    resources.qrc  # Если у вас есть ресурсы (иконка)
+    resources.qrc
 )
 
 target_link_libraries(InstagramTasker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql)
 
-# Установка: executable в bin (будет ~/.local/bin/InstagramTasker)
+# Deployment
 install(TARGETS InstagramTasker RUNTIME DESTINATION bin)
 
-# Опционально: для релиза добавьте оптимизации
+# Optional optimizations
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
