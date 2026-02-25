@@ -1,6 +1,7 @@
 # InstagramTasker Qt
 
 Desktop Qt application for managing and processing Instagram profile download tasks with a queue-based workflow.
+<img width="1701" height="820" alt="instagram_tasker" src="https://github.com/user-attachments/assets/4524ed96-2830-413b-885a-3c60d787cc63" />
 
 The app keeps a source list of profiles, lets you build an active queue, and runs a Python-based Instaloader script with per-profile options.
 
