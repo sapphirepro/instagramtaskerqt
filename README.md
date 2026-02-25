@@ -48,19 +48,30 @@ https://github.com/instaloader/instaloader
 - A valid path to `instaloader.py` configured in Preferences
 
 Notes:
-- Context menu actions `Open folder in Dolphin` and `Open in Gthumb` are Linux-specific conveniences.
+- Folder/gallery opening commands are configurable in `Preferences -> Environment parameters`.
+- Defaults are platform-aware (`xdg-open` on Linux, `open` on macOS, `explorer` on Windows).
 
 ## Build
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j
+cmake --build build --config Release --parallel
 ```
+
+Notes:
+- For single-config generators (Unix Makefiles/Ninja), `CMAKE_BUILD_TYPE=Release` is used.
+- For multi-config generators (Visual Studio/Xcode), `--config Release` selects the build configuration.
 
 ## Run
 
 ```bash
 ./build/InstagramTasker
+```
+
+Windows (Visual Studio generator):
+
+```powershell
+.\build\Release\InstagramTasker.exe
 ```
 
 The app is tray-oriented and starts without forcing the main window to foreground.  
@@ -72,11 +83,14 @@ Use the tray icon to show/hide the window.
 cmake --install build
 ```
 
-Default install prefix is configured to `~/.local`, so the executable is typically installed to:
+To set a custom install prefix:
 
-```text
-~/.local/bin/InstagramTasker
+```bash
+cmake --install build --prefix <install_dir>
 ```
+
+Linux note:
+- If install prefix was not overridden, default prefix is `~/.local`, so binary is typically installed to `~/.local/bin/InstagramTasker`.
 
 ## Quick Start
 
@@ -85,6 +99,10 @@ Default install prefix is configured to `~/.local`, so the executable is typical
 3. Set:
    - working directory
    - Instaloader script path (`instaloader.py` from your Instaloader installation)
+   - `Environment parameters`:
+     - Python executable
+     - file manager command
+     - gallery viewer command
    - optional downloader flags (login, user-agent, abort codes, etc.)
 4. Load profiles from:
    - `File -> Load Profiles...` (text file), or

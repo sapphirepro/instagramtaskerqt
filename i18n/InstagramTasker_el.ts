@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Αποθετήριο έργου και υποστήριξη:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Άνοιγμα φακέλου στον διαχειριστή αρχείων</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Άνοιγμα στην προβολή συλλογής</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Αποτυχία εκκίνησης διαχειριστή αρχείων για %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Αποτυχία εκκίνησης προβολής συλλογής για %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Όριο παρτίδας ουράς:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Παράμετροι περιβάλλοντος</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Εκτελέσιμο Python:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Διαχειριστής αρχείων:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Προβολή συλλογής:</translation>
     </message></context>
 </TS>

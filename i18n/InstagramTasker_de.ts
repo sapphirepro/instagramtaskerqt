@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Projekt-Repository und Support:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Ordner im Dateimanager öffnen</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Im Galeriebetrachter öffnen</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Dateimanager für %1 konnte nicht gestartet werden</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Galeriebetrachter für %1 konnte nicht gestartet werden</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Batch-Warteschlangenlimit:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Umgebungsparameter</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Python-Programm:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Dateimanager:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Galeriebetrachter:</translation>
     </message></context>
 </TS>

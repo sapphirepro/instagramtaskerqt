@@ -6,14 +6,19 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QAbstractButton>
+#include <QSizePolicy>
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
     : QDialog(parent),
       tabs(nullptr),
       generalTab(nullptr),
       defaultBehaviourTab(nullptr),
+      environmentTab(nullptr),
       workingDirLabel(nullptr),
       instaloaderPathLabel(nullptr),
+      pythonExecutableLabel(nullptr),
+      fileManagerLabel(nullptr),
+      galleryViewerLabel(nullptr),
       languageLabel(nullptr),
       loginLabel(nullptr),
       userAgentLabel(nullptr),
@@ -22,6 +27,12 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
       workingDirEdit(nullptr),
       instaloaderPathEdit(nullptr),
       instaloaderBrowseButton(nullptr),
+      pythonExecutableEdit(nullptr),
+      fileManagerEdit(nullptr),
+      galleryViewerEdit(nullptr),
+      pythonBrowseButton(nullptr),
+      fileManagerBrowseButton(nullptr),
+      galleryViewerBrowseButton(nullptr),
       loginEdit(nullptr),
       userAgentEdit(nullptr),
       browseButton(nullptr),
@@ -49,10 +60,14 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
 
     tabs = new QTabWidget(this);
     generalTab = new QWidget(this);
+    environmentTab = new QWidget(this);
     defaultBehaviourTab = new QWidget(this);
 
     workingDirLabel = new QLabel(this);
     instaloaderPathLabel = new QLabel(this);
+    pythonExecutableLabel = new QLabel(this);
+    fileManagerLabel = new QLabel(this);
+    galleryViewerLabel = new QLabel(this);
     languageLabel = new QLabel(this);
     loginLabel = new QLabel(this);
     userAgentLabel = new QLabel(this);
@@ -64,6 +79,12 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
 
     instaloaderPathEdit = new QLineEdit(this);
     instaloaderBrowseButton = new QPushButton(this);
+    pythonExecutableEdit = new QLineEdit(this);
+    fileManagerEdit = new QLineEdit(this);
+    galleryViewerEdit = new QLineEdit(this);
+    pythonBrowseButton = new QPushButton(this);
+    fileManagerBrowseButton = new QPushButton(this);
+    galleryViewerBrowseButton = new QPushButton(this);
 
     loginEdit = new QLineEdit(this);
     userAgentEdit = new QPlainTextEdit(this);
@@ -72,6 +93,9 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
     browseButton = new QPushButton(this);
     connect(browseButton, &QPushButton::clicked, this, &PreferencesDialog::onBrowseClicked);
     connect(instaloaderBrowseButton, &QPushButton::clicked, this, &PreferencesDialog::onInstaloaderBrowseClicked);
+    connect(pythonBrowseButton, &QPushButton::clicked, this, &PreferencesDialog::onPythonBrowseClicked);
+    connect(fileManagerBrowseButton, &QPushButton::clicked, this, &PreferencesDialog::onFileManagerBrowseClicked);
+    connect(galleryViewerBrowseButton, &QPushButton::clicked, this, &PreferencesDialog::onGalleryViewerBrowseClicked);
 
     languageCombo = new QComboBox(this);
 
@@ -153,6 +177,33 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
     generalTab->setLayout(form);
     tabs->addTab(generalTab, "");
 
+    QWidget *pythonWidget = new QWidget(this);
+    QHBoxLayout *pythonRow = new QHBoxLayout(pythonWidget);
+    pythonRow->setContentsMargins(0, 0, 0, 0);
+    pythonRow->addWidget(pythonExecutableEdit);
+    pythonRow->addWidget(pythonBrowseButton);
+
+    QWidget *fileManagerWidget = new QWidget(this);
+    QHBoxLayout *fileManagerRow = new QHBoxLayout(fileManagerWidget);
+    fileManagerRow->setContentsMargins(0, 0, 0, 0);
+    fileManagerRow->addWidget(fileManagerEdit);
+    fileManagerRow->addWidget(fileManagerBrowseButton);
+
+    QWidget *galleryWidget = new QWidget(this);
+    QHBoxLayout *galleryRow = new QHBoxLayout(galleryWidget);
+    galleryRow->setContentsMargins(0, 0, 0, 0);
+    galleryRow->addWidget(galleryViewerEdit);
+    galleryRow->addWidget(galleryViewerBrowseButton);
+
+    QFormLayout *environmentForm = new QFormLayout();
+    environmentForm->addRow(pythonExecutableLabel, pythonWidget);
+    environmentForm->addRow(fileManagerLabel, fileManagerWidget);
+    environmentForm->addRow(galleryViewerLabel, galleryWidget);
+    environmentForm->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+    environmentTab->setLayout(environmentForm);
+    tabs->addTab(environmentTab, "");
+
     defaultEnabledCheck = new QCheckBox(this);
     defaultVideosCheck = new QCheckBox(this);
     defaultStoriesCheck = new QCheckBox(this);
@@ -197,11 +248,18 @@ void PreferencesDialog::updateTexts()
 {
     setWindowTitle(tr("Preferences"));
     tabs->setTabText(0, tr("General"));
-    tabs->setTabText(1, tr("Default behaviour"));
+    tabs->setTabText(1, tr("Environment parameters"));
+    tabs->setTabText(2, tr("Default behaviour"));
     workingDirLabel->setText(tr("Working directory:"));
     instaloaderPathLabel->setText(tr("Instaloader script:"));
+    pythonExecutableLabel->setText(tr("Python executable:"));
+    fileManagerLabel->setText(tr("File manager:"));
+    galleryViewerLabel->setText(tr("Gallery viewer:"));
     browseButton->setText(tr("Browse..."));
     instaloaderBrowseButton->setText(tr("Browse..."));
+    pythonBrowseButton->setText(tr("Browse..."));
+    fileManagerBrowseButton->setText(tr("Browse..."));
+    galleryViewerBrowseButton->setText(tr("Browse..."));
     languageLabel->setText(tr("Language:"));
     loginLabel->setText(tr("Login:"));
     userAgentLabel->setText(tr("User-agent:"));
@@ -250,6 +308,30 @@ void PreferencesDialog::setInstaloaderPath(const QString &path)
 QString PreferencesDialog::instaloaderPath() const
 {
     return instaloaderPathEdit->text().trimmed();
+}
+
+void PreferencesDialog::setEnvironmentCommands(const QString &pythonExecutable,
+                                               const QString &fileManager,
+                                               const QString &galleryViewer)
+{
+    pythonExecutableEdit->setText(pythonExecutable);
+    fileManagerEdit->setText(fileManager);
+    galleryViewerEdit->setText(galleryViewer);
+}
+
+QString PreferencesDialog::pythonExecutable() const
+{
+    return pythonExecutableEdit->text().trimmed();
+}
+
+QString PreferencesDialog::fileManagerCommand() const
+{
+    return fileManagerEdit->text().trimmed();
+}
+
+QString PreferencesDialog::galleryViewerCommand() const
+{
+    return galleryViewerEdit->text().trimmed();
 }
 
 void PreferencesDialog::setLanguageCode(const QString &code)
@@ -329,10 +411,28 @@ void PreferencesDialog::onInstaloaderBrowseClicked()
     emit instaloaderBrowseRequested();
 }
 
+void PreferencesDialog::onPythonBrowseClicked()
+{
+    emit pythonBrowseRequested();
+}
+
+void PreferencesDialog::onFileManagerBrowseClicked()
+{
+    emit fileManagerBrowseRequested();
+}
+
+void PreferencesDialog::onGalleryViewerBrowseClicked()
+{
+    emit galleryViewerBrowseRequested();
+}
+
 void PreferencesDialog::onAccepted()
 {
     emit preferencesAccepted(workingDirectory(),
                              instaloaderPath(),
+                             pythonExecutable(),
+                             fileManagerCommand(),
+                             galleryViewerCommand(),
                              languageCode(),
                              loginEdit->text().trimmed(),
                              skipMetadataCheck->isChecked(),

@@ -19,6 +19,8 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QSplitter>
+#include <QFutureWatcher>
+#include <QPair>
 
 #include <QEvent>
 #include "ts_translator.h"
@@ -404,6 +406,13 @@ private:
      */
     bool recalculateVideoSizeForProfile(const QString &profile, bool persistNow, bool writeLog);
     /**
+     * @brief Applies computed video size bytes to source table row.
+     * @param profile Profile name.
+     * @param bytes Computed size in bytes.
+     * @return True when row was found and updated.
+     */
+    bool applyVideoSizeBytesToProfile(const QString &profile, qint64 bytes);
+    /**
      * @brief Updates "last updated" value for profile row.
      * @param profile Profile name.
      * @param value Timestamp text value.
@@ -450,6 +459,21 @@ private:
      * @return Script path.
      */
     QString instaloaderScriptPathFromSettings() const;
+    /**
+     * @brief Returns Python executable command from settings.
+     * @return Python executable command.
+     */
+    QString pythonExecutableFromSettings() const;
+    /**
+     * @brief Returns file manager command from settings.
+     * @return File manager command.
+     */
+    QString fileManagerCommandFromSettings() const;
+    /**
+     * @brief Returns gallery viewer command from settings.
+     * @return Gallery viewer command.
+     */
+    QString galleryViewerCommandFromSettings() const;
     /**
      * @brief Builds common Instaloader CLI arguments from settings.
      * @return Ordered argument list.
@@ -559,10 +583,12 @@ private:
     bool profileNotFoundError = false;
     bool sourceTableUpdating = false;
     bool sourceBackedByDatabase = false;
+    bool videoSizeRecalcInProgress = false;
     QString lastSourceKind;
     QString workingDir;
     QString profilesFilePath;
     QString profilesDbPath;
+    QFutureWatcher<QVector<QPair<QString, qint64>>> *videoSizeRecalcWatcher = nullptr;
 };
 
 #endif // MAINWINDOW_H

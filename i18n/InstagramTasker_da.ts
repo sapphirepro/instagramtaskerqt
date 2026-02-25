@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Projektets repository og support:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Åbn mappe i filhåndtering</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Åbn i galleriviser</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Kunne ikke starte filhåndtering for %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Kunne ikke starte galleriviser for %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Grænse for batchkø:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Miljøparametre</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Python-eksekverbar fil:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Filhåndtering:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Galleriviser:</translation>
     </message></context>
 </TS>

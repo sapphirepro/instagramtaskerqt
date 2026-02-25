@@ -36,6 +36,10 @@
 #include <QPainter>
 #include <QPointer>
 #include <QStyledItemDelegate>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QtGlobal>
+#include <QtConcurrent/QtConcurrentRun>
 #include <algorithm>
 #include <random>
 #include <limits>
@@ -43,9 +47,39 @@
 #include <QCheckBox>
 
 namespace {
-const char *kDefaultInstaloaderPath = "/Data/instaloader/instaloader.py";
 const char *kDefaultUserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0";
 constexpr int kMaxProfileRating = 5;
+
+QString defaultPythonExecutableCommand()
+{
+#ifdef Q_OS_WIN
+    return QStringLiteral("python");
+#else
+    return QStringLiteral("python3");
+#endif
+}
+
+QString defaultFileManagerCommand()
+{
+#ifdef Q_OS_WIN
+    return QStringLiteral("explorer");
+#elif defined(Q_OS_MACOS) || defined(Q_OS_MAC)
+    return QStringLiteral("open");
+#else
+    return QStringLiteral("xdg-open");
+#endif
+}
+
+QString defaultGalleryViewerCommand()
+{
+#ifdef Q_OS_WIN
+    return QStringLiteral("explorer");
+#elif defined(Q_OS_MACOS) || defined(Q_OS_MAC)
+    return QStringLiteral("open");
+#else
+    return QStringLiteral("xdg-open");
+#endif
+}
 
 int clampProfileRating(int rating)
 {
@@ -1013,9 +1047,60 @@ void MainWindow::openPreferences()
             }
         });
 
+        connect(preferencesDialog, &PreferencesDialog::pythonBrowseRequested, this, [this]() {
+            const QString current = preferencesDialog->pythonExecutable();
+            const QFileInfo info(current);
+            const QString startPath = info.exists() ? info.absoluteFilePath() : QDir::homePath();
+            const QString filePath = QFileDialog::getOpenFileName(
+                    this,
+                    tr("Browse..."),
+                    startPath,
+                    "All Files (*)");
+            if (!filePath.isEmpty()) {
+                preferencesDialog->setEnvironmentCommands(filePath,
+                                                          preferencesDialog->fileManagerCommand(),
+                                                          preferencesDialog->galleryViewerCommand());
+            }
+        });
+
+        connect(preferencesDialog, &PreferencesDialog::fileManagerBrowseRequested, this, [this]() {
+            const QString current = preferencesDialog->fileManagerCommand();
+            const QFileInfo info(current);
+            const QString startPath = info.exists() ? info.absoluteFilePath() : QDir::homePath();
+            const QString filePath = QFileDialog::getOpenFileName(
+                    this,
+                    tr("Browse..."),
+                    startPath,
+                    "All Files (*)");
+            if (!filePath.isEmpty()) {
+                preferencesDialog->setEnvironmentCommands(preferencesDialog->pythonExecutable(),
+                                                          filePath,
+                                                          preferencesDialog->galleryViewerCommand());
+            }
+        });
+
+        connect(preferencesDialog, &PreferencesDialog::galleryViewerBrowseRequested, this, [this]() {
+            const QString current = preferencesDialog->galleryViewerCommand();
+            const QFileInfo info(current);
+            const QString startPath = info.exists() ? info.absoluteFilePath() : QDir::homePath();
+            const QString filePath = QFileDialog::getOpenFileName(
+                    this,
+                    tr("Browse..."),
+                    startPath,
+                    "All Files (*)");
+            if (!filePath.isEmpty()) {
+                preferencesDialog->setEnvironmentCommands(preferencesDialog->pythonExecutable(),
+                                                          preferencesDialog->fileManagerCommand(),
+                                                          filePath);
+            }
+        });
+
         connect(preferencesDialog, &PreferencesDialog::preferencesAccepted, this,
                 [this](const QString &dir,
                        const QString &instaloaderPath,
+                       const QString &pythonExecutable,
+                       const QString &fileManager,
+                       const QString &galleryViewer,
                        const QString &lang,
                        const QString &login,
                        bool noMetadata,
@@ -1044,6 +1129,9 @@ void MainWindow::openPreferences()
                     }
 
                     settings->setValue("instaloader/scriptPath", instaloaderPath.trimmed());
+                    settings->setValue("environment/pythonExecutable", pythonExecutable.trimmed());
+                    settings->setValue("environment/fileManager", fileManager.trimmed());
+                    settings->setValue("environment/galleryViewer", galleryViewer.trimmed());
                     settings->setValue("instaloader/login", login.trimmed());
                     settings->setValue("instaloader/noMetadata", noMetadata);
                     settings->setValue("instaloader/noCaptions", noCaptions);
@@ -1070,6 +1158,9 @@ void MainWindow::openPreferences()
 
     preferencesDialog->setWorkingDirectory(workingDir);
     preferencesDialog->setInstaloaderPath(instaloaderScriptPathFromSettings());
+    preferencesDialog->setEnvironmentCommands(pythonExecutableFromSettings(),
+                                              fileManagerCommandFromSettings(),
+                                              galleryViewerCommandFromSettings());
     preferencesDialog->setLanguageCode(languageCode);
     preferencesDialog->setDownloaderOptions(
             settings->value("instaloader/login", QString()).toString(),
@@ -1658,12 +1749,30 @@ QString MainWindow::formatDataSizeBinary(qint64 bytes) const
 
 bool MainWindow::recalculateVideoSizeForProfile(const QString &profile, bool persistNow, bool writeLog)
 {
+    const qint64 bytes = calculateVideoSizeBytesForProfile(profile);
+    const bool updated = applyVideoSizeBytesToProfile(profile, bytes);
+    if (!updated) {
+        return false;
+    }
+
+    const QString sizeText = formatDataSizeBinary(bytes);
+    if (persistNow) {
+        saveProfilesDatabase();
+    }
+
+    if (writeLog) {
+        log(tr("Video size for %1: %2").arg(profile, sizeText), QColor(Qt::darkCyan));
+    }
+    return true;
+}
+
+bool MainWindow::applyVideoSizeBytesToProfile(const QString &profile, qint64 bytes)
+{
     const int row = findSourceRowByProfile(profile);
     if (row < 0) {
         return false;
     }
 
-    const qint64 bytes = calculateVideoSizeBytesForProfile(profile);
     const QString sizeText = formatDataSizeBinary(bytes);
     sourceTableUpdating = true;
     if (QTableWidgetItem *item = sourceTable->item(row, ColVideosSize)) {
@@ -1675,14 +1784,6 @@ bool MainWindow::recalculateVideoSizeForProfile(const QString &profile, bool per
         sourceTable->setItem(row, ColVideosSize, sizeItem);
     }
     sourceTableUpdating = false;
-
-    if (persistNow) {
-        saveProfilesDatabase();
-    }
-
-    if (writeLog) {
-        log(tr("Video size for %1: %2").arg(profile, sizeText), QColor(Qt::darkCyan));
-    }
     return true;
 }
 
@@ -1704,9 +1805,29 @@ void MainWindow::updateLastUpdatedForProfile(const QString &profile, const QStri
 
 QString MainWindow::instaloaderScriptPathFromSettings() const
 {
-    const QString scriptPath = settings->value("instaloader/scriptPath",
-                                               QString::fromLatin1(kDefaultInstaloaderPath)).toString().trimmed();
-    return scriptPath.isEmpty() ? QString::fromLatin1(kDefaultInstaloaderPath) : scriptPath;
+    const QString configured = settings->value("instaloader/scriptPath", QString()).toString().trimmed();
+    if (!configured.isEmpty()) {
+        return configured;
+    }
+    return QDir(workingDir).filePath(QStringLiteral("instaloader.py"));
+}
+
+QString MainWindow::pythonExecutableFromSettings() const
+{
+    const QString configured = settings->value("environment/pythonExecutable", QString()).toString().trimmed();
+    return configured.isEmpty() ? defaultPythonExecutableCommand() : configured;
+}
+
+QString MainWindow::fileManagerCommandFromSettings() const
+{
+    const QString configured = settings->value("environment/fileManager", QString()).toString().trimmed();
+    return configured.isEmpty() ? defaultFileManagerCommand() : configured;
+}
+
+QString MainWindow::galleryViewerCommandFromSettings() const
+{
+    const QString configured = settings->value("environment/galleryViewer", QString()).toString().trimmed();
+    return configured.isEmpty() ? defaultGalleryViewerCommand() : configured;
 }
 
 QStringList MainWindow::instaloaderCommonArgsFromSettings() const
@@ -2433,8 +2554,8 @@ void MainWindow::showSourceContextMenu(const QPoint &pos)
     QAction *deleteDbAct = menu.addAction(tr("Delete profile from DB"));
     QAction *deleteDbDiskAct = menu.addAction(tr("Delete profile from DB + disk"));
     menu.addSeparator();
-    QAction *openDolphinAct = menu.addAction(tr("Open folder in Dolphin"));
-    QAction *openGthumbAct = menu.addAction(tr("Open in Gthumb"));
+    QAction *openFileManagerAct = menu.addAction(tr("Open folder in file manager"));
+    QAction *openGalleryViewerAct = menu.addAction(tr("Open in gallery viewer"));
     QAction *clearVideosAct = menu.addAction(tr("Clear video files"));
 
     QAction *chosen = menu.exec(sourceTable->viewport()->mapToGlobal(pos));
@@ -2515,16 +2636,32 @@ void MainWindow::showSourceContextMenu(const QPoint &pos)
         return;
     }
 
-    if (chosen == openDolphinAct) {
-        if (!QProcess::startDetached("dolphin", QStringList() << profilePath)) {
-            log(tr("Failed to start Dolphin for %1").arg(profilePath), QColor(Qt::red));
+    if (chosen == openFileManagerAct) {
+        const QString fileManagerCommand = fileManagerCommandFromSettings();
+        bool opened = false;
+        if (!fileManagerCommand.isEmpty()) {
+            opened = QProcess::startDetached(fileManagerCommand, QStringList() << profilePath);
+        }
+        if (!opened) {
+            opened = QDesktopServices::openUrl(QUrl::fromLocalFile(profilePath));
+        }
+        if (!opened) {
+            log(tr("Failed to start file manager for %1").arg(profilePath), QColor(Qt::red));
         }
         return;
     }
 
-    if (chosen == openGthumbAct) {
-        if (!QProcess::startDetached("gthumb", QStringList() << profilePath)) {
-            log(tr("Failed to start Gthumb for %1").arg(profilePath), QColor(Qt::red));
+    if (chosen == openGalleryViewerAct) {
+        const QString galleryViewerCommand = galleryViewerCommandFromSettings();
+        bool opened = false;
+        if (!galleryViewerCommand.isEmpty()) {
+            opened = QProcess::startDetached(galleryViewerCommand, QStringList() << profilePath);
+        }
+        if (!opened) {
+            opened = QDesktopServices::openUrl(QUrl::fromLocalFile(profilePath));
+        }
+        if (!opened) {
+            log(tr("Failed to start gallery viewer for %1").arg(profilePath), QColor(Qt::red));
         }
         return;
     }
@@ -2584,17 +2721,71 @@ void MainWindow::recalculateVideoSizes()
         return;
     }
 
-    int updated = 0;
-    for (int row = 0; row < sourceTable->rowCount(); ++row) {
-        const QString profile = sourceProfileAtRow(row);
-        if (profile.isEmpty()) continue;
-        if (recalculateVideoSizeForProfile(profile, false, false)) {
-            ++updated;
-        }
+    if (videoSizeRecalcInProgress) {
+        return;
     }
 
-    saveProfilesDatabase();
-    log(tr("Recalculated video size for %1 profiles.").arg(updated), QColor(Qt::green));
+    QVector<QString> profiles;
+    profiles.reserve(sourceTable->rowCount());
+    for (int row = 0; row < sourceTable->rowCount(); ++row) {
+        const QString profile = sourceProfileAtRow(row);
+        if (!profile.isEmpty()) {
+            profiles.append(profile);
+        }
+    }
+    if (profiles.isEmpty()) {
+        log(tr("No profiles to recalculate video size."), QColor(Qt::yellow));
+        return;
+    }
+
+    if (!videoSizeRecalcWatcher) {
+        videoSizeRecalcWatcher = new QFutureWatcher<QVector<QPair<QString, qint64>>>(this);
+        connect(videoSizeRecalcWatcher, &QFutureWatcher<QVector<QPair<QString, qint64>>>::finished, this, [this]() {
+            int updated = 0;
+            const QVector<QPair<QString, qint64>> results = videoSizeRecalcWatcher->result();
+            for (const auto &entry : results) {
+                if (applyVideoSizeBytesToProfile(entry.first, entry.second)) {
+                    ++updated;
+                }
+            }
+
+            saveProfilesDatabase();
+            log(tr("Recalculated video size for %1 profiles.").arg(updated), QColor(Qt::green));
+
+            videoSizeRecalcInProgress = false;
+            if (actRecalculateVideoSize) {
+                actRecalculateVideoSize->setEnabled(true);
+            }
+        });
+    }
+
+    const QString workingDirSnapshot = workingDir;
+    videoSizeRecalcInProgress = true;
+    if (actRecalculateVideoSize) {
+        actRecalculateVideoSize->setEnabled(false);
+    }
+
+    videoSizeRecalcWatcher->setFuture(QtConcurrent::run([profiles, workingDirSnapshot]() {
+        QVector<QPair<QString, qint64>> result;
+        result.reserve(profiles.size());
+
+        const QSet<QString> exts = {"mp4", "mov", "webm"};
+        for (const QString &profile : profiles) {
+            qint64 bytes = 0;
+            const QString profilePath = QDir(workingDirSnapshot).filePath(profile);
+            if (QDir(profilePath).exists()) {
+                QDirIterator it(profilePath, QDir::Files, QDirIterator::Subdirectories);
+                while (it.hasNext()) {
+                    it.next();
+                    const QFileInfo fi = it.fileInfo();
+                    if (!exts.contains(fi.suffix().toLower())) continue;
+                    bytes += fi.size();
+                }
+            }
+            result.append(qMakePair(profile, bytes));
+        }
+        return result;
+    }));
 }
 
 void MainWindow::showAboutDialog()
@@ -2799,7 +2990,7 @@ void MainWindow::processNext()
         return;
     }
 
-    QString command = "python3";
+    const QString command = pythonExecutableFromSettings();
     QStringList arguments;
     arguments << scriptPath << profile;
     arguments << instaloaderCommonArgsFromSettings();

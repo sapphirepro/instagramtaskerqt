@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Repozitár projektu a podpora:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Otvoriť priečinok v správcovi súborov</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Otvoriť v prehliadači galérie</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Nepodarilo sa spustiť správcu súborov pre %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Nepodarilo sa spustiť prehliadač galérie pre %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Limit dávkovej fronty:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Parametre prostredia</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Spustiteľný súbor Pythonu:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Správca súborov:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Prehliadač galérie:</translation>
     </message></context>
 </TS>

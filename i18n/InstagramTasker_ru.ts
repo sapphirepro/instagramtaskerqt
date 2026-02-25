@@ -516,6 +516,22 @@
       <source>Project repository and support:</source>
       <translation>Репозиторий и поддержка программы:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Открыть папку в файловом менеджере</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Открыть в просмотрщике галереи</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Не удалось запустить файловый менеджер для %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Не удалось запустить просмотрщик галереи для %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -610,6 +626,22 @@
     <message>
       <source>No iPhone mode (--no-iphone)</source>
       <translation>Без режима iPhone (--no-iphone)</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Параметры окружения</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Исполняемый файл Python:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Файловый менеджер:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Просмотрщик галереи:</translation>
     </message>
 </context>
 </TS>

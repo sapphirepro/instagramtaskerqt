@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Projectrepository en ondersteuning:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Map openen in bestandsbeheer</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Openen in galerieweergave</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Kan bestandsbeheer niet starten voor %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Kan galerieweergave niet starten voor %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Batchwachtrijlimiet:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Omgevingsparameters</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Python-uitvoerbaar bestand:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Bestandsbeheer:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Galerieweergave:</translation>
     </message></context>
 </TS>

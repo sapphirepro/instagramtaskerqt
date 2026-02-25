@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Projektin arkisto ja tuki:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Avaa kansio tiedostonhallinnassa</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Avaa galleriakatselimessa</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Tiedostonhallinnan käynnistys epäonnistui kohteelle %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Galleriakatselimen käynnistys epäonnistui kohteelle %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Eräjonon raja:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Ympäristöasetukset</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Python-suoritettava tiedosto:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Tiedostonhallinta:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Galleriakatselin:</translation>
     </message></context>
 </TS>

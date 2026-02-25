@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Repozitoriul proiectului și suport:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Deschide folderul în managerul de fișiere</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Deschide în vizualizatorul de galerie</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>Nu s-a putut porni managerul de fișiere pentru %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>Nu s-a putut porni vizualizatorul de galerie pentru %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Limită coadă pe lot:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Parametrii de mediu</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Executabil Python:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Manager de fișiere:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Vizualizator galerie:</translation>
     </message></context>
 </TS>

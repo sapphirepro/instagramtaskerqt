@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Repositorio del proyecto y soporte:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Abrir carpeta en el gestor de archivos</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Abrir en el visor de galería</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>No se pudo iniciar el gestor de archivos para %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>No se pudo iniciar el visor de galería para %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Límite de cola por lote:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Parámetros del entorno</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Ejecutable de Python:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Gestor de archivos:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Visor de galería:</translation>
     </message></context>
 </TS>

@@ -47,6 +47,30 @@ public:
      * @return Instaloader script path.
      */
     QString instaloaderPath() const;
+    /**
+     * @brief Sets environment command fields.
+     * @param pythonExecutable Python executable command or path.
+     * @param fileManager File manager command or path.
+     * @param galleryViewer Gallery viewer command or path.
+     */
+    void setEnvironmentCommands(const QString &pythonExecutable,
+                                const QString &fileManager,
+                                const QString &galleryViewer);
+    /**
+     * @brief Returns selected Python executable command.
+     * @return Python executable command.
+     */
+    QString pythonExecutable() const;
+    /**
+     * @brief Returns selected file manager command.
+     * @return File manager command.
+     */
+    QString fileManagerCommand() const;
+    /**
+     * @brief Returns selected gallery viewer command.
+     * @return Gallery viewer command.
+     */
+    QString galleryViewerCommand() const;
 
     /**
      * @brief Sets active UI language code.
@@ -124,9 +148,24 @@ signals:
      */
     void instaloaderBrowseRequested();
     /**
+     * @brief Requests parent to open Python executable chooser.
+     */
+    void pythonBrowseRequested();
+    /**
+     * @brief Requests parent to open file manager chooser.
+     */
+    void fileManagerBrowseRequested();
+    /**
+     * @brief Requests parent to open gallery viewer chooser.
+     */
+    void galleryViewerBrowseRequested();
+    /**
      * @brief Emits accepted preferences payload.
      * @param workingDir Working directory.
      * @param instaloaderPath Instaloader script path.
+     * @param pythonExecutable Python executable command.
+     * @param fileManager File manager command.
+     * @param galleryViewer Gallery viewer command.
      * @param languageCode UI language code.
      * @param login Instaloader login name.
      * @param noMetadata Skip metadata files flag.
@@ -148,6 +187,9 @@ signals:
      */
     void preferencesAccepted(const QString &workingDir,
                             const QString &instaloaderPath,
+                            const QString &pythonExecutable,
+                            const QString &fileManager,
+                            const QString &galleryViewer,
                             const QString &languageCode,
                             const QString &login,
                             bool noMetadata,
@@ -183,6 +225,18 @@ private slots:
      */
     void onInstaloaderBrowseClicked();
     /**
+     * @brief Handles click on Python browse button.
+     */
+    void onPythonBrowseClicked();
+    /**
+     * @brief Handles click on file manager browse button.
+     */
+    void onFileManagerBrowseClicked();
+    /**
+     * @brief Handles click on gallery viewer browse button.
+     */
+    void onGalleryViewerBrowseClicked();
+    /**
      * @brief Validates and emits preferences when dialog is accepted.
      */
     void onAccepted();
@@ -191,9 +245,13 @@ private:
     QTabWidget *tabs;
     QWidget *generalTab;
     QWidget *defaultBehaviourTab;
+    QWidget *environmentTab;
 
     QLabel *workingDirLabel;
     QLabel *instaloaderPathLabel;
+    QLabel *pythonExecutableLabel;
+    QLabel *fileManagerLabel;
+    QLabel *galleryViewerLabel;
     QLabel *languageLabel;
     QLabel *loginLabel;
     QLabel *userAgentLabel;
@@ -203,6 +261,12 @@ private:
     QLineEdit *workingDirEdit;
     QLineEdit *instaloaderPathEdit;
     QPushButton *instaloaderBrowseButton;
+    QLineEdit *pythonExecutableEdit;
+    QLineEdit *fileManagerEdit;
+    QLineEdit *galleryViewerEdit;
+    QPushButton *pythonBrowseButton;
+    QPushButton *fileManagerBrowseButton;
+    QPushButton *galleryViewerBrowseButton;
     QLineEdit *loginEdit;
     QPlainTextEdit *userAgentEdit;
     QPushButton *browseButton;

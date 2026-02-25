@@ -464,6 +464,22 @@
       <source>Project repository and support:</source>
       <translation>Projekt tárháza és támogatás:</translation>
     </message>
+    <message>
+      <source>Open folder in file manager</source>
+      <translation>Mappa megnyitása a fájlkezelőben</translation>
+    </message>
+    <message>
+      <source>Open in gallery viewer</source>
+      <translation>Megnyitás a galérianézegetőben</translation>
+    </message>
+    <message>
+      <source>Failed to start file manager for %1</source>
+      <translation>A fájlkezelő nem indítható ehhez: %1</translation>
+    </message>
+    <message>
+      <source>Failed to start gallery viewer for %1</source>
+      <translation>A galérianézegető nem indítható ehhez: %1</translation>
+    </message>
 </context>
   <context>
     <name>PreferencesDialog</name>
@@ -531,5 +547,21 @@
     <message>
       <source>Batch queue limit:</source>
       <translation>Kötegelt várólista limit:</translation>
+    </message>
+    <message>
+      <source>Environment parameters</source>
+      <translation>Környezeti beállítások</translation>
+    </message>
+    <message>
+      <source>Python executable:</source>
+      <translation>Python futtatható fájl:</translation>
+    </message>
+    <message>
+      <source>File manager:</source>
+      <translation>Fájlkezelő:</translation>
+    </message>
+    <message>
+      <source>Gallery viewer:</source>
+      <translation>Galérianézegető:</translation>
     </message></context>
 </TS>
